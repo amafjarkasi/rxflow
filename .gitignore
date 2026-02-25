@@ -1,0 +1,273 @@
+# =============================================================================
+# Go Prescription Orchestration Engine - .gitignore
+# =============================================================================
+
+# ==========================
+# Go Build Artifacts
+# ==========================
+bin/
+dist/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+vendor/
+go.work
+go.work.sum
+
+# ==========================
+# IDE and Editor Files
+# ==========================
+# VS Code
+.vscode/
+*.code-workspace
+
+# JetBrains IDEs (GoLand, IntelliJ)
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Vim
+*.swp
+*.swo
+*~
+.*.swp
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# Sublime Text
+*.sublime-workspace
+*.sublime-project
+
+# ==========================
+# OS Generated Files
+# ==========================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ==========================
+# Environment and Config
+# ==========================
+.env
+.env.local
+.env.*.local
+.env.development
+.env.test
+.env.production
+*.env
+
+# Local config overrides
+config.local.yaml
+config.local.json
+*.local.yaml
+*.local.json
+
+# ==========================
+# Secrets and Credentials
+# ==========================
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+*.jks
+credentials.json
+secrets.yaml
+secrets.json
+service-account*.json
+*-credentials.json
+*.secret
+
+# DEA/EPCS PKI Keys (NEVER commit)
+keys/
+certs/
+pki/
+*.private
+*.priv
+
+# API Keys
+api-keys.txt
+api-keys.json
+
+# ==========================
+# Database Files
+# ==========================
+*.db
+*.sqlite
+*.sqlite3
+data/
+pgdata/
+postgres-data/
+
+# ==========================
+# Docker
+# ==========================
+docker-compose.override.yml
+docker-compose.local.yml
+.docker/
+
+# ==========================
+# Logs and Debugging
+# ==========================
+logs/
+*.log
+*.log.*
+debug/
+debug.out
+trace.out
+cpu.prof
+mem.prof
+*.prof
+
+# ==========================
+# Test Artifacts
+# ==========================
+coverage.out
+coverage.html
+coverage.txt
+*.coverprofile
+test-results/
+junit.xml
+test-report.xml
+
+# ==========================
+# Build and CI/CD
+# ==========================
+.build/
+.cache/
+.tmp/
+tmp/
+temp/
+
+# GitHub Actions
+.act/
+
+# ==========================
+# Documentation Build
+# ==========================
+docs/_build/
+docs/site/
+site/
+
+# ==========================
+# Dependency Caches
+# ==========================
+.pkg/
+.mod/
+
+# ==========================
+# Generated Files
+# ==========================
+# Protocol Buffers
+*.pb.go
+
+# Swagger/OpenAPI (generated)
+swagger-generated/
+api/generated/
+
+# Mock files (if generated)
+mocks/generated/
+
+# ==========================
+# Project Specific
+# ==========================
+# Kafka/Redpanda data (local dev)
+redpanda-data/
+kafka-data/
+zookeeper-data/
+
+# TimescaleDB data
+timescale-data/
+
+# Grafana data
+grafana-data/
+
+# Prometheus data
+prometheus-data/
+
+# Jaeger data
+jaeger-data/
+
+# Load test results
+load-test-results/
+k6-results/
+
+# FHIR test bundles (large files)
+test/fixtures/large/
+test/fixtures/*.bundle.json
+
+# NCPDP test messages
+test/ncpdp-samples/
+
+# ==========================
+# Backup Files
+# ==========================
+*.bak
+*.backup
+*.old
+*.orig
+
+# ==========================
+# Archives
+# ==========================
+*.tar
+*.tar.gz
+*.tgz
+*.zip
+*.rar
+*.7z
+
+# ==========================
+# Misc
+# ==========================
+TODO.md
+NOTES.md
+scratch/
+sandbox/
+experiments/
+.scratch/
+
+# ==========================
+# Research and Internal Docs
+# ==========================
+# Internal research documents (not for public)
+*Research*.md
+*Architecture and Orchestration*.md
+*High-Volume Prescription Engine Architecture*.md
+TECHNICAL_REPORT*.md
+research/
+internal-docs/

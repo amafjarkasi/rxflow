@@ -1,0 +1,76 @@
+{
+  "resourceType": "MedicationRequest",
+  "id": "test-rx-001",
+  "status": "active",
+  "intent": "order",
+  "medication": {
+    "concept": {
+      "coding": [
+        {
+          "system": "http://hl7.org/fhir/sid/ndc",
+          "code": "00093-0058-01",
+          "display": "Lisinopril 10mg Tablet"
+        },
+        {
+          "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+          "code": "314076",
+          "display": "Lisinopril 10 MG Oral Tablet"
+        }
+      ],
+      "text": "Lisinopril 10mg Tablet"
+    }
+  },
+  "subject": {
+    "reference": "Patient/test-patient-001",
+    "display": "John Doe"
+  },
+  "authoredOn": "2026-02-25T10:00:00Z",
+  "requester": {
+    "reference": "Practitioner/test-prescriber-001",
+    "identifier": {
+      "system": "http://hl7.org/fhir/sid/us-npi",
+      "value": "1234567890"
+    },
+    "display": "Dr. Jane Smith"
+  },
+  "dosageInstruction": [
+    {
+      "text": "Take 1 tablet by mouth once daily",
+      "timing": {
+        "repeat": {
+          "frequency": 1,
+          "period": 1,
+          "periodUnit": "d"
+        }
+      },
+      "doseAndRate": [
+        {
+          "doseQuantity": {
+            "value": 1,
+            "unit": "tablet",
+            "system": "http://unitsofmeasure.org",
+            "code": "{tablet}"
+          }
+        }
+      ]
+    }
+  ],
+  "dispenseRequest": {
+    "quantity": {
+      "value": 30,
+      "unit": "tablet",
+      "system": "http://unitsofmeasure.org",
+      "code": "{tablet}"
+    },
+    "expectedSupplyDuration": {
+      "value": 30,
+      "unit": "days",
+      "system": "http://unitsofmeasure.org",
+      "code": "d"
+    },
+    "numberOfRepeatsAllowed": 3
+  },
+  "substitution": {
+    "allowedBoolean": true
+  }
+}
