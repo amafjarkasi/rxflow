@@ -222,7 +222,7 @@ type OrganizationContact struct {
 // GetNCPDPID returns the organization's NCPDP ID (for pharmacies).
 func (o *Organization) GetNCPDPID() string {
 	for _, id := range o.Identifier {
-		if id.System == "http://hl7.org/fhir/sid/us-npi" ||
+		if id.System == SystemNCPDP ||
 			id.System == "http://terminology.hl7.org/CodeSystem/NCPDPProviderIdentificationNumber" {
 			return id.Value
 		}
