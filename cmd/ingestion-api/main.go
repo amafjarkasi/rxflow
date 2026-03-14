@@ -34,7 +34,10 @@ func main() {
 	defer logger.Sync()
 
 	// Load configuration
-	cfg := loadConfig()
+	cfg, err := loadConfig()
+	if err != nil {
+		logger.Fatal("failed to load configuration", zap.Error(err))
+	}
 
 	// Connect to database
 	pool, err := pgxpool.New(context.Background(), cfg.DatabaseURL)
@@ -115,7 +118,7 @@ func main() {
 	logger.Info("server stopped")
 }
 
-func loadConfig() Config {
+func loadConfig() (Config, error) {
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8081"
@@ -123,7 +126,7 @@ func loadConfig() Config {
 
 	dbURL := os.Getenv("DATABASE_URL")
 	if dbURL == "" {
-		dbURL = "postgres://oec:oec_dev_password@localhost:5432/oec?sslmode=disable"
+		return Config{}, fmt.Errorf("DATABASE_URL environment variable is required")
 	}
 
 	// Simple API keys for demo
@@ -142,7 +145,7 @@ func loadConfig() Config {
 		DatabaseURL: dbURL,
 		APIKeys:     apiKeys,
 		LogLevel:    os.Getenv("LOG_LEVEL"),
-	}
+	}, nil
 }
 
 func healthHandler(w http.ResponseWriter, r *http.Request) {
