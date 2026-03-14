@@ -474,19 +474,12 @@ func mapFHIRDEAToNCPDP(fhirCode string) string {
 	}
 }
 
-// formatFHIRDate converts FHIR date (YYYY-MM-DD) to NCPDP date (CCYYMMDD)
+// formatFHIRDate converts FHIR date (YYYY-MM-DD) or datetime to NCPDP date (CCYYMMDD)
 func formatFHIRDate(fhirDate string) string {
-	// Remove dashes from FHIR date format
-	return strings.ReplaceAll(fhirDate, "-", "")
-}
-
-// formatFHIRDateTime converts FHIR datetime to NCPDP date
-func formatFHIRDateTime(fhirDateTime string) string {
-	// Take just the date portion and format
-	if len(fhirDateTime) >= 10 {
-		return formatFHIRDate(fhirDateTime[:10])
+	if len(fhirDate) > 10 {
+		fhirDate = fhirDate[:10]
 	}
-	return formatFHIRDate(fhirDateTime)
+	return strings.ReplaceAll(fhirDate, "-", "")
 }
 
 // mapTelecom converts FHIR ContactPoint array to SCRIPT CommunicationNumbers
