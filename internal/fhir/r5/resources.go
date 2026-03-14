@@ -1,7 +1,10 @@
 // Package r5 provides FHIR R5 data structures for the prescription orchestration engine.
 package r5
 
-import "time"
+import (
+	"strings"
+	"time"
+)
 
 // Patient represents a FHIR R5 Patient resource.
 type Patient struct {
@@ -53,20 +56,20 @@ func (p *Patient) GetFullName() string {
 	if name.Text != "" {
 		return name.Text
 	}
-	result := ""
+	var b strings.Builder
 	for _, g := range name.Given {
-		if result != "" {
-			result += " "
+		if b.Len() > 0 {
+			b.WriteByte(' ')
 		}
-		result += g
+		b.WriteString(g)
 	}
 	if name.Family != "" {
-		if result != "" {
-			result += " "
+		if b.Len() > 0 {
+			b.WriteByte(' ')
 		}
-		result += name.Family
+		b.WriteString(name.Family)
 	}
-	return result
+	return b.String()
 }
 
 // GetHomeAddress returns the patient's home address.
@@ -172,26 +175,28 @@ func (p *Practitioner) GetFullName() string {
 	if name.Text != "" {
 		return name.Text
 	}
-	result := ""
+	var b strings.Builder
 	for _, prefix := range name.Prefix {
-		result += prefix + " "
+		b.WriteString(prefix)
+		b.WriteByte(' ')
 	}
 	for _, g := range name.Given {
-		if result != "" && result[len(result)-1] != ' ' {
-			result += " "
+		if b.Len() > 0 && b.String()[b.Len()-1] != ' ' {
+			b.WriteByte(' ')
 		}
-		result += g
+		b.WriteString(g)
 	}
 	if name.Family != "" {
-		if result != "" && result[len(result)-1] != ' ' {
-			result += " "
+		if b.Len() > 0 && b.String()[b.Len()-1] != ' ' {
+			b.WriteByte(' ')
 		}
-		result += name.Family
+		b.WriteString(name.Family)
 	}
 	for _, suffix := range name.Suffix {
-		result += ", " + suffix
+		b.WriteString(", ")
+		b.WriteString(suffix)
 	}
-	return result
+	return b.String()
 }
 
 // Organization represents a FHIR R5 Organization resource.
