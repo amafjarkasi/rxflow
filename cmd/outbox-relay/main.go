@@ -22,7 +22,7 @@ func main() {
 	// Load config
 	dbURL := os.Getenv("DATABASE_URL")
 	if dbURL == "" {
-		dbURL = "postgres://oec:oec_dev_password@localhost:5432/oec?sslmode=disable"
+		logger.Fatal("DATABASE_URL environment variable is required")
 	}
 
 	brokers := []string{"localhost:9092"}
