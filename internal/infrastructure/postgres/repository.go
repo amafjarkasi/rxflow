@@ -177,3 +177,48 @@ func (r *PrescriptionRepository) Load(ctx context.Context, id string) (*prescrip
 
 	return aggregate, nil
 }
+
+// Apply encryption before save
+// This ensures that the events are stored and published encrypted
+func (r *PrescriptionRepository) SaveWithEncryption(ctx context.Context, aggregate *prescription.Aggregate, encryptor interface{ EncryptString(string) (string, error) }) error {
+	// Re-write the aggregate fields with their encrypted counterparts
+	if err := aggregate.ApplyEncryption(encryptor.EncryptString); err != nil {
+		return fmt.Errorf("failed to apply encryption: %w", err)
+	}
+
+	// Iterate over the event changes and rewrite sensitive payload fields too
+	changes := aggregate.Changes()
+	for _, event := range changes {
+		if event.EventType == prescription.EventPrescriptionCreated {
+			var data prescription.PrescriptionCreatedData
+			if err := json.Unmarshal(event.EventData, &data); err == nil {
+				if encName, err := encryptor.EncryptString(data.MedicationName); err == nil {
+					data.MedicationName = encName
+				}
+				if encSig, err := encryptor.EncryptString(data.SigText); err == nil {
+					data.SigText = encSig
+				}
+				// Re-marshal the modified data
+				if modifiedData, err := json.Marshal(data); err == nil {
+					event.EventData = modifiedData
+				}
+			}
+		}
+	}
+
+	return r.Save(ctx, aggregate)
+}
+
+// LoadWithDecryption loads the aggregate from the database and decrypts its sensitive fields
+func (r *PrescriptionRepository) LoadWithDecryption(ctx context.Context, id string, decryptor interface{ DecryptString(string) (string, error) }) (*prescription.Aggregate, error) {
+	aggregate, err := r.Load(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := aggregate.ApplyDecryption(decryptor.DecryptString); err != nil {
+		return nil, fmt.Errorf("failed to apply decryption: %w", err)
+	}
+
+	return aggregate, nil
+}

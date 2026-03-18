@@ -223,3 +223,45 @@ func (a *Aggregate) applyValidated(event *Event) {
 	}
 	a.status = StatusValidated
 }
+
+// ApplyEncryption updates sensitive fields via the provided encryptor before they are persisted
+func (a *Aggregate) ApplyEncryption(encryptFunc func(string) (string, error)) error {
+	if a.sigText != "" {
+		encSig, err := encryptFunc(a.sigText)
+		if err != nil {
+			return err
+		}
+		a.sigText = encSig
+	}
+
+	if a.medicationName != "" {
+		encName, err := encryptFunc(a.medicationName)
+		if err != nil {
+			return err
+		}
+		a.medicationName = encName
+	}
+
+	return nil
+}
+
+// ApplyDecryption restores sensitive fields via the provided decryptor after they are loaded
+func (a *Aggregate) ApplyDecryption(decryptFunc func(string) (string, error)) error {
+	if a.sigText != "" {
+		decSig, err := decryptFunc(a.sigText)
+		if err != nil {
+			return err
+		}
+		a.sigText = decSig
+	}
+
+	if a.medicationName != "" {
+		decName, err := decryptFunc(a.medicationName)
+		if err != nil {
+			return err
+		}
+		a.medicationName = decName
+	}
+
+	return nil
+}

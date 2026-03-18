@@ -15,14 +15,14 @@ func TestAggregate_Validate(t *testing.T) {
 	}
 
 	validData := PrescriptionCreatedData{
-		PrescriptionID:  "rx-123",
-		PatientHash:     "hash123",
-		PrescriberNPI:   "1234567890",
-		MedicationNDC:   "12345-678-90",
-		Quantity:        30,
-		DaysSupply:      30,
-		SigText:         "Take 1 daily",
-		IsControlled:    false,
+		PrescriptionID: "rx-123",
+		PatientHash:    "hash123",
+		PrescriberNPI:  "1234567890",
+		MedicationNDC:  "12345-678-90",
+		Quantity:       30,
+		DaysSupply:     30,
+		SigText:        "Take 1 daily",
+		IsControlled:   false,
 	}
 
 	t.Run("successful validation", func(t *testing.T) {

@@ -98,6 +98,6 @@ func (e *Event) WithAuditInfo(npi, dea, hash string) *Event {
 
 // PrescriptionValidatedData contains validation details
 type PrescriptionValidatedData struct {
-	PrescriptionID  string    `json:"prescription_id"`
-	ValidatedAt     time.Time `json:"validated_at"`
+	PrescriptionID string    `json:"prescription_id"`
+	ValidatedAt    time.Time `json:"validated_at"`
 }
