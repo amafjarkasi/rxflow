@@ -141,6 +141,8 @@ func (a *Aggregate) apply(event *Event) {
 	switch event.EventType {
 	case EventPrescriptionCreated:
 		a.applyCreated(event)
+	case EventPrescriptionValidated:
+		a.applyValidated(event)
 	case EventPrescriptionRouted:
 		a.applyRouted(event)
 	case EventPrescriptionTransmitted:
@@ -212,4 +214,12 @@ func init() {
 	jsonUnmarshal = func(data []byte, v interface{}) error {
 		return nil // Will use encoding/json in real impl
 	}
+}
+
+func (a *Aggregate) applyValidated(event *Event) {
+	var data PrescriptionValidatedData
+	if err := unmarshalEventData(event.EventData, &data); err != nil {
+		return
+	}
+	a.status = StatusValidated
 }
