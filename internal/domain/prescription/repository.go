@@ -37,11 +37,30 @@ func (r *Repository) Save(ctx context.Context, agg *Aggregate) error {
 	}
 	defer tx.Rollback(ctx)
 
+	batch := &pgx.Batch{}
+	query := `
+		INSERT INTO prescription_events
+		(aggregate_id, event_type, event_data, version, prescriber_npi, prescriber_dea, patient_hash, correlation_id)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+	`
+
 	for i, event := range agg.Changes() {
 		event.Version = agg.Version() - len(agg.Changes()) + i + 1
-		if err := r.insertEvent(ctx, tx, event); err != nil {
-			return err
-		}
+		batch.Queue(query,
+			event.AggregateID,
+			event.EventType,
+			event.EventData,
+			event.Version,
+			event.PrescriberNPI,
+			event.PrescriberDEA,
+			event.PatientHash,
+			event.CorrelationID,
+		)
+	}
+
+	br := tx.SendBatch(ctx, batch)
+	if err := br.Close(); err != nil {
+		return fmt.Errorf("batch execute: %w", err)
 	}
 
 	if err := tx.Commit(ctx); err != nil {
@@ -50,25 +69,6 @@ func (r *Repository) Save(ctx context.Context, agg *Aggregate) error {
 
 	agg.ClearChanges()
 	return nil
-}
-
-func (r *Repository) insertEvent(ctx context.Context, tx pgx.Tx, event *Event) error {
-	query := `
-		INSERT INTO prescription_events 
-		(aggregate_id, event_type, event_data, version, prescriber_npi, prescriber_dea, patient_hash, correlation_id)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-	`
-	_, err := tx.Exec(ctx, query,
-		event.AggregateID,
-		event.EventType,
-		event.EventData,
-		event.Version,
-		event.PrescriberNPI,
-		event.PrescriberDEA,
-		event.PatientHash,
-		event.CorrelationID,
-	)
-	return err
 }
 
 // Load retrieves an aggregate by ID
