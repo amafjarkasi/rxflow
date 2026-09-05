@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -22,10 +23,11 @@ import (
 
 // Config holds application configuration
 type Config struct {
-	Port        string
-	DatabaseURL string
-	APIKeys     map[string]string
-	LogLevel    string
+	Port           string
+	DatabaseURL    string
+	APIKeys        map[string]string
+	AllowedOrigins []string
+	LogLevel       string
 }
 
 func main() {
@@ -64,7 +66,7 @@ func main() {
 	// Global middleware
 	r.Use(chimw.RealIP)
 	r.Use(middleware.RequestID)
-	r.Use(middleware.CORS)
+	r.Use(middleware.CORS(cfg.AllowedOrigins))
 	r.Use(middleware.Recover(logger))
 	r.Use(middleware.Logger(logger))
 	r.Use(middleware.Tracing("ingestion-api"))
@@ -140,11 +142,19 @@ func loadConfig() (Config, error) {
 		apiKeys[key] = "env-client"
 	}
 
+	var allowedOrigins []string
+	if origins := os.Getenv("ALLOWED_ORIGINS"); origins != "" {
+		for _, o := range strings.Split(origins, ",") {
+			allowedOrigins = append(allowedOrigins, strings.TrimSpace(o))
+		}
+	}
+
 	return Config{
-		Port:        port,
-		DatabaseURL: dbURL,
-		APIKeys:     apiKeys,
-		LogLevel:    os.Getenv("LOG_LEVEL"),
+		Port:           port,
+		DatabaseURL:    dbURL,
+		APIKeys:        apiKeys,
+		AllowedOrigins: allowedOrigins,
+		LogLevel:       os.Getenv("LOG_LEVEL"),
 	}, nil
 }
 
