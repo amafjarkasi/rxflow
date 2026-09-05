@@ -86,9 +86,9 @@ func (m *ScriptToFHIRMapper) MapPatientFromScript(scriptPatient *script.Patient)
 			{
 				Use:    "official",
 				Family: scriptPatient.Name.LastName,
-				Given:  buildGivenNames(scriptPatient.Name.FirstName, scriptPatient.Name.MiddleName),
-				Prefix: buildStringSlice(scriptPatient.Name.Prefix),
-				Suffix: buildStringSlice(scriptPatient.Name.Suffix),
+				Given:  buildSlice(scriptPatient.Name.FirstName, scriptPatient.Name.MiddleName),
+				Prefix: buildSlice(scriptPatient.Name.Prefix),
+				Suffix: buildSlice(scriptPatient.Name.Suffix),
 			},
 		},
 		Gender: mapNCPDPGenderToFHIR(scriptPatient.Gender),
@@ -104,7 +104,7 @@ func (m *ScriptToFHIRMapper) MapPatientFromScript(scriptPatient *script.Patient)
 		patient.Address = []fhir.Address{
 			{
 				Use:        "home",
-				Line:       buildAddressLines(scriptPatient.Address.AddressLine1, scriptPatient.Address.AddressLine2),
+				Line:       buildSlice(scriptPatient.Address.AddressLine1, scriptPatient.Address.AddressLine2),
 				City:       scriptPatient.Address.City,
 				State:      scriptPatient.Address.State,
 				PostalCode: scriptPatient.Address.PostalCode,
@@ -142,9 +142,9 @@ func (m *ScriptToFHIRMapper) MapPrescriberFromScript(scriptPrescriber *script.Pr
 			{
 				Use:    "official",
 				Family: scriptPrescriber.Name.LastName,
-				Given:  buildGivenNames(scriptPrescriber.Name.FirstName, scriptPrescriber.Name.MiddleName),
-				Prefix: buildStringSlice(scriptPrescriber.Name.Prefix),
-				Suffix: buildStringSlice(scriptPrescriber.Name.Suffix),
+				Given:  buildSlice(scriptPrescriber.Name.FirstName, scriptPrescriber.Name.MiddleName),
+				Prefix: buildSlice(scriptPrescriber.Name.Prefix),
+				Suffix: buildSlice(scriptPrescriber.Name.Suffix),
 			},
 		},
 	}
@@ -170,7 +170,7 @@ func (m *ScriptToFHIRMapper) MapPrescriberFromScript(scriptPrescriber *script.Pr
 		practitioner.Address = []fhir.Address{
 			{
 				Use:        "work",
-				Line:       buildAddressLines(scriptPrescriber.Address.AddressLine1, scriptPrescriber.Address.AddressLine2),
+				Line:       buildSlice(scriptPrescriber.Address.AddressLine1, scriptPrescriber.Address.AddressLine2),
 				City:       scriptPrescriber.Address.City,
 				State:      scriptPrescriber.Address.State,
 				PostalCode: scriptPrescriber.Address.PostalCode,
@@ -231,7 +231,7 @@ func (m *ScriptToFHIRMapper) MapPharmacyFromScript(scriptPharmacy *script.Pharma
 		org.Address = []fhir.Address{
 			{
 				Use:        "work",
-				Line:       buildAddressLines(scriptPharmacy.Address.AddressLine1, scriptPharmacy.Address.AddressLine2),
+				Line:       buildSlice(scriptPharmacy.Address.AddressLine1, scriptPharmacy.Address.AddressLine2),
 				City:       scriptPharmacy.Address.City,
 				State:      scriptPharmacy.Address.State,
 				PostalCode: scriptPharmacy.Address.PostalCode,
@@ -336,34 +336,19 @@ func mapCommunicationNumbersToFHIR(comm *script.CommunicationNumbers) []fhir.Con
 }
 
 // Helper functions
-func buildGivenNames(first, middle string) []string {
-	var names []string
-	if first != "" {
-		names = append(names, first)
+func buildSlice(items ...string) []string {
+	var result []string
+	for _, item := range items {
+		if item != "" {
+			result = append(result, item)
+		}
 	}
-	if middle != "" {
-		names = append(names, middle)
-	}
-	return names
-}
-
-func buildStringSlice(s string) []string {
-	if s == "" {
+	if len(result) == 0 {
 		return nil
 	}
-	return []string{s}
+	return result
 }
 
-func buildAddressLines(line1, line2 string) []string {
-	var lines []string
-	if line1 != "" {
-		lines = append(lines, line1)
-	}
-	if line2 != "" {
-		lines = append(lines, line2)
-	}
-	return lines
-}
 
 // MapMessageTypeToFHIRTask maps SCRIPT message types to FHIR Task status/intent
 func MapMessageTypeToFHIRTask(messageType string) (status, intent string) {
