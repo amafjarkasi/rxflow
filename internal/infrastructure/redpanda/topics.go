@@ -220,7 +220,7 @@ func (a *Admin) DescribeTopic(ctx context.Context, topic string) (*TopicDetails,
 		return nil, fmt.Errorf("topic %s not found", topic)
 	}
 
-	var partitions []PartitionDetails
+	partitions := make([]PartitionDetails, 0, len(t.Partitions))
 	for _, p := range t.Partitions {
 		partitions = append(partitions, PartitionDetails{
 			ID:       p.Partition,
